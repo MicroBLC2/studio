@@ -22,11 +22,11 @@ export function ReadingsTable({ readings }: ReadingsTableProps) {
         <CardHeader>
           <CardTitle className="text-xl flex items-center">
              <ListOrdered className="mr-2 h-6 w-6 text-primary" />
-            Recorded Readings
+            Mesures Enregistrées
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">No readings entered yet.</p>
+          <p className="text-muted-foreground">Aucune mesure enregistrée pour l'instant.</p>
         </CardContent>
       </Card>
     );
@@ -37,7 +37,7 @@ export function ReadingsTable({ readings }: ReadingsTableProps) {
       <CardHeader>
         <CardTitle className="text-xl flex items-center">
           <ListOrdered className="mr-2 h-6 w-6 text-primary" />
-          Recorded Readings
+          Mesures Enregistrées
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -45,16 +45,16 @@ export function ReadingsTable({ readings }: ReadingsTableProps) {
           <Table>
             <TableHeader className="sticky top-0 bg-background z-10">
               <TableRow>
-                <TableHead className="w-[100px]">Index</TableHead>
-                <TableHead>Timestamp</TableHead>
-                <TableHead className="text-right">Value</TableHead>
+                <TableHead className="w-[100px]">Indice</TableHead>
+                <TableHead>Horodatage</TableHead>
+                <TableHead className="text-right">Valeur</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {readings.map((reading, index) => (
                 <TableRow key={reading.id}>
                   <TableCell className="font-medium">{index + 1}</TableCell>
-                  <TableCell>{reading.timestamp.toLocaleString()}</TableCell>
+                  <TableCell>{reading.timestamp.toLocaleString('fr-FR')}</TableCell>
                   <TableCell className="text-right">{reading.value.toFixed(4)}</TableCell>
                 </TableRow>
               ))}

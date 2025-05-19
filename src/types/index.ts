@@ -6,24 +6,24 @@ export interface SpectroReading {
 }
 
 export interface ControlLimits {
-  meanX?: number;
-  uclX?: number;
-  lclX?: number;
-  meanMR?: number;
-  uclMR?: number;
-  lclMR?: number; // Typically 0 for MR chart with n=2 for moving ranges
+  meanX?: number;    // Moyenne pour la carte I (Individuals)
+  uclX?: number;     // Limite de Contrôle Supérieure pour la carte I
+  lclX?: number;     // Limite de Contrôle Inférieure pour la carte I
+  meanMR?: number;   // Moyenne pour la carte MR (Moving Range / Étendue Mobile)
+  uclMR?: number;    // Limite de Contrôle Supérieure pour la carte MR
+  lclMR?: number;    // Limite de Contrôle Inférieure pour la carte MR (Typiquement 0 pour n=2)
 }
 
 export interface ChartDataPoint {
-  name: string; // Typically timestamp or index
+  name: string; // Typiquement horodatage ou indice
   value?: number;
   mr?: number;
   uclX?: number;
-  clX?: number;
+  clX?: number;     // Ligne Centrale pour I
   lclX?: number;
   uclMR?: number;
-  clMR?: number;
-  lclMR?: number; // Typically 0
+  clMR?: number;    // Ligne Centrale pour MR
+  lclMR?: number; 
   isOutOfControlX?: boolean;
   isOutOfControlMR?: boolean;
 }
@@ -31,8 +31,8 @@ export interface ChartDataPoint {
 export interface OutOfControlPoint {
   index: number;
   value: number;
-  type: 'I-Chart' | 'MR-Chart';
-  limitViolated: 'UCL' | 'LCL';
+  type: 'I-Chart' | 'MR-Chart'; // Type de carte : Individus ou Étendue Mobile
+  limitViolated: 'UCL' | 'LCL'; // Limite violée : Supérieure ou Inférieure
   limitValue: number;
   timestamp: Date;
 }

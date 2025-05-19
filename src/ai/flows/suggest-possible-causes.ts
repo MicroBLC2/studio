@@ -2,11 +2,11 @@
 'use server';
 
 /**
- * @fileOverview This file defines a Genkit flow for suggesting possible causes of out-of-control points on a spectrophotometer control chart.
+ * @fileOverview Ce fichier définit un flux Genkit pour suggérer les causes possibles des points hors contrôle sur une carte de contrôle de spectrophotomètre.
  *
- * - suggestPossibleCauses - A function that takes spectrophotometer readings and identifies potential causes for deviations.
- * - SuggestPossibleCausesInput - The input type for the suggestPossibleCauses function, including control chart data.
- * - SuggestPossibleCausesOutput - The return type for the suggestPossibleCauses function, providing suggested causes.
+ * - suggestPossibleCauses - Une fonction qui prend les lectures du spectrophotomètre et identifie les causes potentielles des écarts.
+ * - SuggestPossibleCausesInput - Le type d'entrée pour la fonction suggestPossibleCauses, incluant les données de la carte de contrôle.
+ * - SuggestPossibleCausesOutput - Le type de retour pour la fonction suggestPossibleCauses, fournissant les causes suggérées.
  */
 
 import {ai} from '@/ai/genkit';
@@ -16,12 +16,12 @@ const SuggestPossibleCausesInputSchema = z.object({
   controlChartData: z
     .string()
     .describe(
-      'Data from the spectrophotometer control chart, including date, time, and readings.'
+      'Données de la carte de contrôle du spectrophotomètre, incluant date, heure et lectures.'
     ),
   outOfControlPoints: z
     .string()
     .describe(
-      'A description of any identified out-of-control points, including the rule violated.'
+      'Une description de tous les points hors contrôle identifiés, y compris la règle violée.'
     ),
 });
 export type SuggestPossibleCausesInput = z.infer<typeof SuggestPossibleCausesInputSchema>;
@@ -30,7 +30,7 @@ const SuggestPossibleCausesOutputSchema = z.object({
   possibleCauses: z
     .string()
     .describe(
-      'A list of possible causes for the out-of-control points, based on the data and rules violated.'
+      'Une liste des causes possibles des points hors contrôle, basée sur les données et les règles violées.'
     ),
 });
 export type SuggestPossibleCausesOutput = z.infer<typeof SuggestPossibleCausesOutputSchema>;
@@ -45,12 +45,12 @@ const prompt = ai.definePrompt({
   name: 'suggestPossibleCausesPrompt',
   input: {schema: SuggestPossibleCausesInputSchema},
   output: {schema: SuggestPossibleCausesOutputSchema},
-  prompt: `You are a quality control expert for spectrophotometers. Based on the control chart data and identified out-of-control points, provide a list of possible causes for the issues.
+  prompt: `Vous êtes un expert en contrôle qualité pour les spectrophotomètres. En vous basant sur les données de la carte de contrôle et les points hors contrôle identifiés, fournissez une liste des causes possibles des problèmes.
 
-Control Chart Data: {{{controlChartData}}}
-Out-of-Control Points: {{{outOfControlPoints}}}
+Données de la Carte de Contrôle : {{{controlChartData}}}
+Points Hors Contrôle : {{{outOfControlPoints}}}
 
-Possible Causes:`,
+Causes Possibles :`,
 });
 
 const suggestPossibleCausesFlow = ai.defineFlow(

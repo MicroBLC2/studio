@@ -20,10 +20,10 @@ export function AiSuggestions({ suggestions, isLoading, hasOutOfControlPoints }:
       <CardHeader>
         <CardTitle className="text-xl flex items-center">
           <Lightbulb className="mr-2 h-6 w-6 text-primary" />
-          AI-Powered Suggestions
+          Suggestions de l'IA
         </CardTitle>
         <CardDescription>
-          Potential causes for the identified out-of-control points.
+          Causes potentielles des points hors contrôle identifiés.
         </CardDescription>
       </CardHeader>
       <CardContent className="min-h-[100px]">
@@ -42,10 +42,10 @@ export function AiSuggestions({ suggestions, isLoading, hasOutOfControlPoints }:
           </div>
         )}
         {!isLoading && !suggestions && hasOutOfControlPoints && (
-          <p className="text-muted-foreground">No suggestions available at the moment.</p>
+          <p className="text-muted-foreground">Aucune suggestion disponible pour le moment.</p>
         )}
          {!isLoading && !suggestions && !hasOutOfControlPoints && (
-          <p className="text-muted-foreground">No out-of-control points detected to provide suggestions for.</p>
+          <p className="text-muted-foreground">Aucun point hors contrôle détecté pour fournir des suggestions.</p>
         )}
       </CardContent>
     </Card>

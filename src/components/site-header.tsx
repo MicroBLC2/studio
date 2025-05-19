@@ -8,7 +8,7 @@ export function SiteHeader() {
         <Link href="/" className="mr-6 flex items-center space-x-2">
           <FlaskConical className="h-6 w-6 text-primary" />
           <span className="font-bold sm:inline-block">
-            SpectroControl
+            SpectroContrôle
           </span>
         </Link>
         {/* Add navigation items here if needed in the future */}

@@ -13,16 +13,17 @@ type ControlChartProps = {
   outOfControlPoints: OutOfControlPoint[];
 };
 
+// TODO: Consider moving chartConfig to a separate file or context if it becomes complex
 const chartConfigBase = {
-  value: { label: "Value", color: "hsl(var(--chart-1))" },
-  uclX: { label: "UCL (I)", color: "hsl(var(--destructive))" },
-  clX: { label: "CL (I)", color: "hsl(var(--primary))" },
-  lclX: { label: "LCL (I)", color: "hsl(var(--destructive))" },
-  mr: { label: "MR", color: "hsl(var(--chart-2))" },
-  uclMR: { label: "UCL (MR)", color: "hsl(var(--destructive))" },
-  clMR: { label: "CL (MR)", color: "hsl(var(--accent))" },
-  lclMR: { label: "LCL (MR)", color: "hsl(var(--destructive))" },
-  ooc: { label: "Out of Control", color: "hsl(var(--destructive))" },
+  value: { label: "Valeur", color: "hsl(var(--chart-1))" },
+  uclX: { label: "LSC (I)", color: "hsl(var(--destructive))" },
+  clX: { label: "LC (I)", color: "hsl(var(--primary))" },
+  lclX: { label: "LIC (I)", color: "hsl(var(--destructive))" },
+  mr: { label: "EM", color: "hsl(var(--chart-2))" }, // EM for Étendue Mobile
+  uclMR: { label: "LSC (EM)", color: "hsl(var(--destructive))" },
+  clMR: { label: "LC (EM)", color: "hsl(var(--accent))" },
+  lclMR: { label: "LIC (EM)", color: "hsl(var(--destructive))" },
+  ooc: { label: "Hors Contrôle", color: "hsl(var(--destructive))" },
 };
 
 const CustomizedDot = (props: any) => {
@@ -46,7 +47,7 @@ export function ControlChart({ readings, controlLimits, outOfControlPoints }: Co
       const isOocMR = outOfControlPoints.some(p => p.index === index && p.type === 'MR-Chart' && mrValue === p.value);
       
       return {
-        name: reading.timestamp.toLocaleTimeString(), // Use time for x-axis, or index
+        name: reading.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }), // Use time for x-axis, or index
         value: reading.value,
         mr: mrValue,
         uclX: controlLimits.uclX,
@@ -71,12 +72,12 @@ export function ControlChart({ readings, controlLimits, outOfControlPoints }: Co
         <CardHeader>
           <CardTitle className="text-xl flex items-center">
             <LineChartIcon className="mr-2 h-6 w-6 text-primary" />
-            Control Charts (I-MR)
+            Cartes de Contrôle (I-EM)
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground h-[300px] flex items-center justify-center">
-            At least 2 readings are required to generate control charts.
+            Au moins 2 mesures sont nécessaires pour générer les cartes de contrôle.
           </p>
         </CardContent>
       </Card>
@@ -99,9 +100,9 @@ export function ControlChart({ readings, controlLimits, outOfControlPoints }: Co
         <CardHeader>
           <CardTitle className="text-xl flex items-center">
             <LineChartIcon className="mr-2 h-5 w-5 text-primary" />
-            Individuals (I) Chart
+            Carte des Individuels (I)
           </CardTitle>
-          <CardDescription>Tracks individual measurements over time.</CardDescription>
+          <CardDescription>Suit les mesures individuelles au fil du temps.</CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfigBase} className="h-[300px] w-full">
@@ -114,12 +115,12 @@ export function ControlChart({ readings, controlLimits, outOfControlPoints }: Co
                 wrapperStyle={{ outline: "none" }}
                 cursor={{ stroke: "hsl(var(--accent))", strokeWidth: 1 }}
               />
-              {controlLimits.uclX !== undefined && <ReferenceLine y={controlLimits.uclX} label={{ value: "UCL", position: "insideTopRight", fill: "hsl(var(--destructive))", fontSize: 10 }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />}
-              {controlLimits.meanX !== undefined && <ReferenceLine y={controlLimits.meanX} label={{ value: "CL", position: "insideTopRight", fill: "hsl(var(--primary))", fontSize: 10 }} stroke="hsl(var(--primary))" strokeDasharray="3 3" />}
-              {controlLimits.lclX !== undefined && <ReferenceLine y={controlLimits.lclX} label={{ value: "LCL", position: "insideBottomRight", fill: "hsl(var(--destructive))", fontSize: 10 }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />}
-              <Line type="monotone" dataKey="value" stroke="hsl(var(--chart-1))" strokeWidth={2} dot={<CustomizedDot isOutOfControl={false} />} activeDot={{ r: 6 }} name="Value" />
+              {controlLimits.uclX !== undefined && <ReferenceLine y={controlLimits.uclX} label={{ value: "LSC", position: "insideTopRight", fill: "hsl(var(--destructive))", fontSize: 10 }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />}
+              {controlLimits.meanX !== undefined && <ReferenceLine y={controlLimits.meanX} label={{ value: "LC", position: "insideTopRight", fill: "hsl(var(--primary))", fontSize: 10 }} stroke="hsl(var(--primary))" strokeDasharray="3 3" />}
+              {controlLimits.lclX !== undefined && <ReferenceLine y={controlLimits.lclX} label={{ value: "LIC", position: "insideBottomRight", fill: "hsl(var(--destructive))", fontSize: 10 }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />}
+              <Line type="monotone" dataKey="value" stroke="hsl(var(--chart-1))" strokeWidth={2} dot={<CustomizedDot isOutOfControl={false} />} activeDot={{ r: 6 }} name="Valeur" />
               {oocIData.length > 0 && (
-                 <Scatter data={oocIData} fill="hsl(var(--destructive))" shape={<CustomizedDot isOutOfControl={true} />} name="OOC (I)" />
+                 <Scatter data={oocIData} fill="hsl(var(--destructive))" shape={<CustomizedDot isOutOfControl={true} />} name="HC (I)" />
               )}
                <Legend content={<ChartLegendContent />} />
             </LineChart>
@@ -131,9 +132,9 @@ export function ControlChart({ readings, controlLimits, outOfControlPoints }: Co
         <CardHeader>
           <CardTitle className="text-xl flex items-center">
             <LineChartIcon className="mr-2 h-5 w-5 text-primary" />
-            Moving Range (MR) Chart
+            Carte de l'Étendue Mobile (EM)
           </CardTitle>
-          <CardDescription>Tracks the variation between consecutive measurements.</CardDescription>
+          <CardDescription>Suit la variation entre les mesures consécutives.</CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfigBase} className="h-[300px] w-full">
@@ -146,12 +147,12 @@ export function ControlChart({ readings, controlLimits, outOfControlPoints }: Co
                 wrapperStyle={{ outline: "none" }}
                  cursor={{ stroke: "hsl(var(--accent))", strokeWidth: 1 }}
               />
-              {controlLimits.uclMR !== undefined && <ReferenceLine y={controlLimits.uclMR} label={{ value: "UCL", position: "insideTopRight", fill: "hsl(var(--destructive))", fontSize: 10 }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />}
-              {controlLimits.meanMR !== undefined && <ReferenceLine y={controlLimits.meanMR} label={{ value: "CL", position: "insideTopRight", fill: "hsl(var(--accent))", fontSize: 10 }} stroke="hsl(var(--accent))" strokeDasharray="3 3" />}
-              {controlLimits.lclMR !== undefined && controlLimits.lclMR > 0 && <ReferenceLine y={controlLimits.lclMR} label={{ value: "LCL", position: "insideBottomRight", fill: "hsl(var(--destructive))", fontSize: 10 }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />}
-              <Line type="monotone" dataKey="mr" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={<CustomizedDot isOutOfControl={false}/>} activeDot={{ r: 6 }} name="MR" />
+              {controlLimits.uclMR !== undefined && <ReferenceLine y={controlLimits.uclMR} label={{ value: "LSC", position: "insideTopRight", fill: "hsl(var(--destructive))", fontSize: 10 }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />}
+              {controlLimits.meanMR !== undefined && <ReferenceLine y={controlLimits.meanMR} label={{ value: "LC", position: "insideTopRight", fill: "hsl(var(--accent))", fontSize: 10 }} stroke="hsl(var(--accent))" strokeDasharray="3 3" />}
+              {controlLimits.lclMR !== undefined && controlLimits.lclMR > 0 && <ReferenceLine y={controlLimits.lclMR} label={{ value: "LIC", position: "insideBottomRight", fill: "hsl(var(--destructive))", fontSize: 10 }} stroke="hsl(var(--destructive))" strokeDasharray="3 3" />}
+              <Line type="monotone" dataKey="mr" stroke="hsl(var(--chart-2))" strokeWidth={2} dot={<CustomizedDot isOutOfControl={false}/>} activeDot={{ r: 6 }} name="EM" />
                {oocMRData.length > 0 && (
-                 <Scatter data={oocMRData} fill="hsl(var(--destructive))" shape={<CustomizedDot isOutOfControl={true} />} name="OOC (MR)" />
+                 <Scatter data={oocMRData} fill="hsl(var(--destructive))" shape={<CustomizedDot isOutOfControl={true} />} name="HC (EM)" />
               )}
               <Legend content={<ChartLegendContent />} />
             </LineChart>
@@ -163,14 +164,14 @@ export function ControlChart({ readings, controlLimits, outOfControlPoints }: Co
           <CardHeader>
             <CardTitle className="text-xl flex items-center text-destructive">
               <AlertTriangle className="mr-2 h-6 w-6" />
-              Out-of-Control Points Detected!
+              Points Hors Contrôle Détectés !
             </CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="list-disc pl-5 space-y-1 text-destructive">
               {outOfControlPoints.map((p, i) => (
                 <li key={i}>
-                  Point at {p.timestamp.toLocaleTimeString()} (Index {p.index +1}, Value: {p.value.toFixed(4)}) on {p.type} is {p.limitViolated === 'UCL' ? 'above' : 'below'} {p.limitViolated} ({p.limitValue.toFixed(4)}).
+                  Point à {p.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })} (Indice {p.index +1}, Valeur: {p.value.toFixed(4)}) sur {p.type === 'I-Chart' ? 'Carte I' : 'Carte EM'} est {p.limitViolated === 'UCL' ? 'au-dessus' : 'en dessous'} de {p.limitViolated} ({p.limitValue.toFixed(4)}).
                 </li>
               ))}
             </ul>

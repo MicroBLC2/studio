@@ -39,7 +39,7 @@ export default function SpectroControlPage() {
     try {
       const controlChartDataString = JSON.stringify(currentReadings.map(r => ({ value: r.value, timestamp: r.timestamp.toISOString() })));
       const outOfControlPointsString = oocPoints
-        .map(p => `Point at index ${p.index + 1} (value: ${p.value.toFixed(4)}) on ${p.type} violated ${p.limitViolated} (${p.limitValue.toFixed(4)}) at ${p.timestamp.toLocaleTimeString()}`)
+        .map(p => `Point à l'indice ${p.index + 1} (valeur: ${p.value.toFixed(4)}) sur ${p.type} a violé ${p.limitViolated} (${p.limitValue.toFixed(4)}) à ${p.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`)
         .join("\n");
 
       const result = await suggestPossibleCauses({
@@ -48,11 +48,11 @@ export default function SpectroControlPage() {
       });
       setAiSuggestions(result.possibleCauses);
     } catch (error) {
-      console.error("Error fetching AI suggestions:", error);
-      setAiSuggestions("Error fetching suggestions. Please try again.");
+      console.error("Erreur lors de la récupération des suggestions IA:", error);
+      setAiSuggestions("Erreur lors de la récupération des suggestions. Veuillez réessayer.");
       toast({
-        title: "AI Suggestion Error",
-        description: "Could not fetch suggestions from the AI model.",
+        title: "Erreur de Suggestion IA",
+        description: "Impossible de récupérer les suggestions du modèle IA.",
         variant: "destructive",
       });
     } finally {

@@ -17,7 +17,7 @@ import { PlusCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const formSchema = z.object({
-  value: z.coerce.number().min(-10000, "Value too small").max(10000, "Value too large"), // Adjust min/max as needed
+  value: z.coerce.number().min(-10000, "Valeur trop petite").max(10000, "Valeur trop grande"), // Ajuster min/max au besoin
 });
 
 type DataInputFormProps = {
@@ -29,13 +29,13 @@ export function DataInputForm({ onAddReading, disabled }: DataInputFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      value: undefined, // So placeholder shows
+      value: undefined, // Pour que le placeholder s'affiche
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     onAddReading(values.value);
-    form.reset(); // Reset form after submission
+    form.reset(); // Réinitialiser le formulaire après soumission
   }
 
   return (
@@ -43,7 +43,7 @@ export function DataInputForm({ onAddReading, disabled }: DataInputFormProps) {
       <CardHeader>
         <CardTitle className="flex items-center text-xl">
           <PlusCircle className="mr-2 h-6 w-6 text-primary" />
-          Add New Reading
+          Ajouter une Nouvelle Mesure
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -54,16 +54,16 @@ export function DataInputForm({ onAddReading, disabled }: DataInputFormProps) {
               name="value"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Spectrophotometer Value</FormLabel>
+                  <FormLabel>Valeur du Spectrophotomètre</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="Enter reading" {...field} step="any" />
+                    <Input type="number" placeholder="Entrez la mesure" {...field} step="any" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <Button type="submit" className="w-full" disabled={disabled}>
-              <PlusCircle className="mr-2 h-4 w-4" /> Add Reading
+              <PlusCircle className="mr-2 h-4 w-4" /> Ajouter la Mesure
             </Button>
           </form>
         </Form>

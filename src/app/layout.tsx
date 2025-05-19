@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'SpectroControl',
-  description: 'Control chart application for spectrophotometers',
+  title: 'SpectroContrôle',
+  description: 'Application de carte de contrôle pour spectrophotomètres',
 };
 
 export default function RootLayout({
@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="fr" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}>
         <SiteHeader />
         <main className="flex-grow container mx-auto p-4 md:p-6 lg:p-8">
