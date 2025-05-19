@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -17,6 +18,7 @@ export default function SpectroControlPage() {
   const [outOfControlPoints, setOutOfControlPoints] = useState<OutOfControlPoint[]>([]);
   const [aiSuggestions, setAiSuggestions] = useState<string | null>(null);
   const [isLoadingAiSuggestions, setIsLoadingAiSuggestions] = useState(false);
+  const [targetValue, setTargetValue] = useState<number | null>(null);
 
   const { toast } = useToast();
 
@@ -29,7 +31,11 @@ export default function SpectroControlPage() {
     setReadings((prevReadings) => [...prevReadings, newReading]);
   };
 
-  const fetchAiSuggestions = useCallback(async (currentReadings: SpectroReading[], oocPoints: OutOfControlPoint[]) => {
+  const handleSetTargetValue = (value: number | null) => {
+    setTargetValue(value);
+  };
+
+  const fetchAiSuggestions = useCallback(async (currentReadings: SpectroReading[], oocPoints: OutOfControlPoint[], currentTargetValue: number | null) => {
     if (oocPoints.length === 0) {
       setAiSuggestions(null);
       return;
@@ -42,10 +48,15 @@ export default function SpectroControlPage() {
         .map(p => `Point à l'indice ${p.index + 1} (valeur: ${p.value.toFixed(4)}) sur ${p.type} a violé ${p.limitViolated} (${p.limitValue.toFixed(4)}) à ${p.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`)
         .join("\n");
 
-      const result = await suggestPossibleCauses({
+      const input: Parameters<typeof suggestPossibleCauses>[0] = {
         controlChartData: controlChartDataString,
         outOfControlPoints: outOfControlPointsString,
-      });
+      };
+      if (currentTargetValue !== null) {
+        input.targetValue = currentTargetValue;
+      }
+
+      const result = await suggestPossibleCauses(input);
       setAiSuggestions(result.possibleCauses);
     } catch (error) {
       console.error("Erreur lors de la récupération des suggestions IA:", error);
@@ -71,7 +82,7 @@ export default function SpectroControlPage() {
         setOutOfControlPoints(oocPoints);
         
         if (oocPoints.length > 0) {
-          fetchAiSuggestions(readings, oocPoints);
+          fetchAiSuggestions(readings, oocPoints, targetValue);
         } else {
           setAiSuggestions(null); // Clear suggestions if no OOC points
         }
@@ -85,12 +96,17 @@ export default function SpectroControlPage() {
         setOutOfControlPoints([]);
         setAiSuggestions(null);
     }
-  }, [readings, fetchAiSuggestions]);
+  }, [readings, fetchAiSuggestions, targetValue]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-1 space-y-6">
-        <DataInputForm onAddReading={handleAddReading} disabled={isLoadingAiSuggestions} />
+        <DataInputForm 
+          onAddReading={handleAddReading} 
+          currentTargetValue={targetValue}
+          onSetTargetValue={handleSetTargetValue}
+          disabled={isLoadingAiSuggestions} 
+        />
         <ReadingsTable readings={readings} />
       </div>
 
@@ -99,6 +115,7 @@ export default function SpectroControlPage() {
           readings={readings} 
           controlLimits={controlLimits} 
           outOfControlPoints={outOfControlPoints}
+          targetValue={targetValue}
         />
         <AiSuggestions 
           suggestions={aiSuggestions} 

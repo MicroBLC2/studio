@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,33 +14,73 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { PlusCircle } from "lucide-react";
+import { Label } from "@/components/ui/label"; // Ajout de l'importation manquante
+import { PlusCircle, Target } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
 const formSchema = z.object({
-  value: z.coerce.number().min(-10000, "Valeur trop petite").max(10000, "Valeur trop grande"), // Ajuster min/max au besoin
+  value: z.coerce.number().min(-10000, "Valeur trop petite").max(10000, "Valeur trop grande"),
 });
 
 type DataInputFormProps = {
   onAddReading: (value: number) => void;
+  currentTargetValue: number | null;
+  onSetTargetValue: (value: number | null) => void;
   disabled?: boolean;
 };
 
-export function DataInputForm({ onAddReading, disabled }: DataInputFormProps) {
+export function DataInputForm({ onAddReading, currentTargetValue, onSetTargetValue, disabled }: DataInputFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      value: undefined, // Pour que le placeholder s'affiche
+      value: undefined, 
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     onAddReading(values.value);
-    form.reset(); // Réinitialiser le formulaire après soumission
+    form.reset(); 
   }
+
+  const handleTargetChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    if (value === "") {
+      onSetTargetValue(null);
+    } else {
+      const numValue = parseFloat(value);
+      if (!isNaN(numValue)) {
+        onSetTargetValue(numValue);
+      }
+    }
+  };
 
   return (
     <Card className="shadow-lg">
+      <CardHeader>
+        <CardTitle className="flex items-center text-xl">
+          <Target className="mr-2 h-6 w-6 text-primary" />
+          Définir la Valeur Cible
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="targetValue">Valeur Cible (Optionnel)</Label>
+          <Input
+            id="targetValue"
+            type="number"
+            placeholder="Entrez la valeur cible"
+            value={currentTargetValue === null ? "" : currentTargetValue.toString()}
+            onChange={handleTargetChange}
+            step="any"
+            disabled={disabled}
+            className="text-base md:text-sm"
+          />
+        </div>
+      </CardContent>
+      
+      <Separator className="my-4" />
+
       <CardHeader>
         <CardTitle className="flex items-center text-xl">
           <PlusCircle className="mr-2 h-6 w-6 text-primary" />
@@ -56,7 +97,7 @@ export function DataInputForm({ onAddReading, disabled }: DataInputFormProps) {
                 <FormItem>
                   <FormLabel>Valeur du Spectrophotomètre</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="Entrez la mesure" {...field} step="any" />
+                    <Input type="number" placeholder="Entrez la mesure" {...field} step="any" disabled={disabled} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
