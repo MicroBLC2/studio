@@ -22,11 +22,12 @@ export default function SpectroControlPage() {
 
   const { toast } = useToast();
 
-  const handleAddReading = (value: number) => {
+  const handleAddReading = (data: { value: number; operatorName: string }) => {
     const newReading: SpectroReading = {
       id: crypto.randomUUID(),
-      value,
+      value: data.value,
       timestamp: new Date(),
+      operatorName: data.operatorName,
     };
     setReadings((prevReadings) => [...prevReadings, newReading]);
   };
@@ -43,9 +44,15 @@ export default function SpectroControlPage() {
 
     setIsLoadingAiSuggestions(true);
     try {
-      const controlChartDataString = JSON.stringify(currentReadings.map(r => ({ value: r.value, timestamp: r.timestamp.toISOString() })));
+      const controlChartDataString = JSON.stringify(
+        currentReadings.map(r => ({ 
+          value: r.value, 
+          timestamp: r.timestamp.toISOString(), 
+          operatorName: r.operatorName 
+        }))
+      );
       const outOfControlPointsString = oocPoints
-        .map(p => `Point à l'indice ${p.index + 1} (valeur: ${p.value.toFixed(4)}) sur ${p.type} a violé ${p.limitViolated} (${p.limitValue.toFixed(4)}) à ${p.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`)
+        .map(p => `Point à l'indice ${p.index + 1} (valeur: ${p.value.toFixed(4)}, opérateur: ${currentReadings[p.index]?.operatorName || 'N/A'}) sur ${p.type} a violé ${p.limitViolated} (${p.limitValue.toFixed(4)}) à ${p.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`)
         .join("\n");
 
       const input: Parameters<typeof suggestPossibleCauses>[0] = {
@@ -77,21 +84,20 @@ export default function SpectroControlPage() {
       const limits = calculateIMRControlLimits(readings);
       setControlLimits(limits);
       
-      if (Object.keys(limits).length > 0) { // Check if limits are actually calculated
+      if (Object.keys(limits).length > 0) { 
         const oocPoints = detectOutOfControlPoints(readings, limits);
         setOutOfControlPoints(oocPoints);
         
         if (oocPoints.length > 0) {
           fetchAiSuggestions(readings, oocPoints, targetValue);
         } else {
-          setAiSuggestions(null); // Clear suggestions if no OOC points
+          setAiSuggestions(null); 
         }
       } else {
         setOutOfControlPoints([]);
         setAiSuggestions(null);
       }
     } else {
-        // Reset states if no readings
         setControlLimits({});
         setOutOfControlPoints([]);
         setAiSuggestions(null);

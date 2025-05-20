@@ -1,3 +1,4 @@
+
 import type { SpectroReading } from "@/types";
 import {
   Table,
@@ -45,8 +46,9 @@ export function ReadingsTable({ readings }: ReadingsTableProps) {
           <Table>
             <TableHeader className="sticky top-0 bg-background z-10">
               <TableRow>
-                <TableHead className="w-[100px]">Indice</TableHead>
+                <TableHead className="w-[80px]">Indice</TableHead>
                 <TableHead>Horodatage</TableHead>
+                <TableHead>Opérateur</TableHead>
                 <TableHead className="text-right">Valeur</TableHead>
               </TableRow>
             </TableHeader>
@@ -55,6 +57,7 @@ export function ReadingsTable({ readings }: ReadingsTableProps) {
                 <TableRow key={reading.id}>
                   <TableCell className="font-medium">{index + 1}</TableCell>
                   <TableCell>{reading.timestamp.toLocaleString('fr-FR')}</TableCell>
+                  <TableCell>{reading.operatorName}</TableCell>
                   <TableCell className="text-right">{reading.value.toFixed(4)}</TableCell>
                 </TableRow>
               ))}

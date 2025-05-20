@@ -17,12 +17,12 @@ const SuggestPossibleCausesInputSchema = z.object({
   controlChartData: z
     .string()
     .describe(
-      'Données de la carte de contrôle du spectrophotomètre, incluant date, heure et lectures.'
+      'Données de la carte de contrôle du spectrophotomètre, incluant date, heure, lectures et nom de l\'opérateur.'
     ),
   outOfControlPoints: z
     .string()
     .describe(
-      'Une description de tous les points hors contrôle identifiés, y compris la règle violée.'
+      'Une description de tous les points hors contrôle identifiés, y compris la règle violée et l\'opérateur si disponible.'
     ),
   targetValue: z.number().optional().describe('La valeur cible souhaitée pour le contrôle, si spécifiée.'),
 });
@@ -32,7 +32,7 @@ const SuggestPossibleCausesOutputSchema = z.object({
   possibleCauses: z
     .string()
     .describe(
-      'Une liste des causes possibles des points hors contrôle, basée sur les données, les règles violées et la valeur cible si fournie.'
+      'Une liste des causes possibles des points hors contrôle, basée sur les données, les règles violées, le nom de l\'opérateur et la valeur cible si fournie.'
     ),
 });
 export type SuggestPossibleCausesOutput = z.infer<typeof SuggestPossibleCausesOutputSchema>;
@@ -47,13 +47,13 @@ const prompt = ai.definePrompt({
   name: 'suggestPossibleCausesPrompt',
   input: {schema: SuggestPossibleCausesInputSchema},
   output: {schema: SuggestPossibleCausesOutputSchema},
-  prompt: `Vous êtes un expert en contrôle qualité pour les spectrophotomètres. En vous basant sur les données de la carte de contrôle et les points hors contrôle identifiés, fournissez une liste des causes possibles des problèmes.
+  prompt: `Vous êtes un expert en contrôle qualité pour les spectrophotomètres. En vous basant sur les données de la carte de contrôle (qui incluent le nom de l'opérateur pour chaque mesure) et les points hors contrôle identifiés, fournissez une liste des causes possibles des problèmes.
 {{#if targetValue}}
 La valeur cible pour ce contrôle est de {{{targetValue}}}. Prenez cela en compte lors de l'analyse des déviations.
 {{/if}}
 
-Données de la Carte de Contrôle : {{{controlChartData}}}
-Points Hors Contrôle : {{{outOfControlPoints}}}
+Données de la Carte de Contrôle (incluant l'opérateur) : {{{controlChartData}}}
+Points Hors Contrôle (incluant l'opérateur le cas échéant) : {{{outOfControlPoints}}}
 
 Causes Possibles :`,
 });

@@ -3,6 +3,7 @@ export interface SpectroReading {
   id: string;
   value: number;
   timestamp: Date;
+  operatorName: string; // Ajout du nom de l'opérateur
 }
 
 export interface ControlLimits {
@@ -23,9 +24,10 @@ export interface ChartDataPoint {
   lclX?: number;
   uclMR?: number;
   clMR?: number;    // Ligne Centrale pour MR
-  lclMR?: number; 
+  lclMR?: number;
   isOutOfControlX?: boolean;
   isOutOfControlMR?: boolean;
+  operatorName?: string; // Optionnel, si on veut l'afficher dans le tooltip du graphe
 }
 
 export interface OutOfControlPoint {
