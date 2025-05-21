@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -77,7 +76,6 @@ export default function SpectroControlPage() {
       setIsLoadingAiSuggestions(false);
     }
   }, [toast]);
-
 
   useEffect(() => {
     if (readings.length > 0) {
