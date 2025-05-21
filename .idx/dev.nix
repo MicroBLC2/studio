@@ -7,6 +7,7 @@
   packages = [
     pkgs.nodejs_20
     pkgs.zulu
+    pkgs.nodejs_20_x.pkgs.next
   ];
   # Sets environment variables in the workspace
   env = {
